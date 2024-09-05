@@ -1,4 +1,4 @@
-import { Account, Avatars, Client, Databases, ID, Query } from 'react-native-appwrite';
+import { Account, Avatars, Client, Databases, ID, ImageGravity, Query, Storage } from 'react-native-appwrite';
 
 
 export const appwriteConfig = {
@@ -22,7 +22,8 @@ client
 
 const account = new Account(client);
 const avatars = new Avatars(client);
-const databases = new Databases(client)
+const databases = new Databases(client);
+const storage = new Storage(client)
 
 export const createUser = async(email:string,password:string,username:string)=>{
     try {
@@ -79,6 +80,16 @@ export const getCurrentUser= async()=>{
     }
 
 }
+export const signOut = async()=>{
+    try {
+        const session= await account.deleteSession("current")
+        return session;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message)
+        }
+    }
+}
 
 export const getAllPosts = async()=>{
     try {
@@ -91,5 +102,123 @@ export const getAllPosts = async()=>{
         if (error instanceof Error) {
             throw new Error(error.message)
         }
+    }
+}
+export const getLatestPost = async()=>{
+    try {
+        const posts = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.videoCollectionId,
+            [Query.orderDesc("$createdAt"),Query.limit(7)]
+        )
+        return posts.documents;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message)
+        }
+    }
+}
+export const getSearchPosts = async(query:any)=>{
+    try {
+        const posts= await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.videoCollectionId,
+            [Query.search("title",query)]
+        )
+        if(!posts) throw new Error("Something went wrong")
+        return posts.documents;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message)
+        }
+    }
+}
+export const getUserPosts= async(userId:string)=>{
+    try {
+        const posts = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.videoCollectionId,
+            [Query.equal("creator",userId)]
+        )
+        return posts.documents;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message)
+        }
+    }
+}
+
+export const uploadFile= async(file:any,type:string)=>{
+    if (!file) return;
+    const {mimType, ...rest} = file;
+    const asset= {type:mimType, ...rest} //this is how appwrite can recognize
+
+    try {
+        const uploadedFile= await storage.createFile(
+            appwriteConfig.storageId,
+            ID.unique(),
+            asset
+        )
+    
+        const fileUrl = await getFilePreview(uploadedFile.$id,type)
+        return fileUrl;
+        
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message)
+        }
+    }
+
+}
+export const getFilePreview = async(fileId:any,type:string)=>{
+    let fileUrl;
+    try {
+        if(type === "video"){
+            fileUrl =  storage.getFileView(appwriteConfig.storageId,fileId)
+        }else if (type === "image"){
+            fileUrl =  storage.getFilePreview(appwriteConfig.storageId,fileId,
+                2000,
+                2000,
+                ImageGravity.Top,
+                100
+            )
+        }else{
+            throw new Error("Invalid file type")
+        }
+    
+        if(!fileUrl) throw Error
+
+        return fileUrl;
+        
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message)
+        } 
+    }
+}
+
+export const createVideoPost = async(form:any)=>{
+    try {
+        const [thumbnailUrl,videoUrl] = await Promise.all([
+            uploadFile(form.thumbnail, "image"),
+            uploadFile(form.video, "video")
+        ]);
+        const newPost = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.videoCollectionId,
+            ID.unique(),
+            {
+                title:form.title,
+                thumbnail: thumbnailUrl,
+                video:videoUrl,
+                prompt:form.prompt,
+                creator:form.userId,
+            }
+        )
+        return newPost;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message)
+        } 
     }
 }

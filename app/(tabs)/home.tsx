@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useGlobalContext } from '@/context/UserContext'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import useAppwrite from '@/lib/useAppwrite'
-import { getAllPosts } from '@/lib/appwrite'
+import { getAllPosts, getLatestPost } from '@/lib/appwrite'
 import VideoCard from '@/components/VideoCard'
 import { images } from '@/constants'
 import SearchInput from '@/components/SearchInput'
@@ -12,8 +12,12 @@ import EmptyState from '@/components/EmptyState'
 
 
 const Home = () => {
+  const {user} = useGlobalContext() 
   const {data:posts, refetch} = useAppwrite(getAllPosts)
+  const {data:latesPosts} = useAppwrite(getLatestPost)
+
   const [refreshing,setRefreshing] = useState(false)
+
 
   const onRefresh= async()=>{
     setRefreshing(true)
@@ -39,7 +43,7 @@ const Home = () => {
             <View className="flex justify-between items-center flex-row mb-6">
               <View>
                 <Text className="font-pmedium text-sm text-gray-100">Welcome Back</Text>
-                <Text className="text-2xl font-psemibold text-white">Rashin</Text>
+                <Text className="text-2xl font-psemibold text-white">{user?.username}</Text>
               </View>
               <View >
                 <Image source={images.logoSmall}
@@ -52,7 +56,7 @@ const Home = () => {
               <Text className="text-lg font-pregular text-gray-100 mb-3">
                 Latest Videos
               </Text>
-              <Trending posts={posts}/>
+              <Trending posts={latesPosts ?? []}/>
             </View>
           </View>
         )}

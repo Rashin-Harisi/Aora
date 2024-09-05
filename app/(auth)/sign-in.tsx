@@ -25,6 +25,7 @@ const SignIn = () => {
       const session= await signIn(form.email, form.password)
       setUser(session)
       setIsLogged(true)
+      Alert.alert("Success", "User successfully signed in.")
       if(session) router.replace('/home')
     } catch (error) {
       if (error instanceof Error) {
