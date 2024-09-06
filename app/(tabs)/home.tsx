@@ -15,7 +15,7 @@ const Home = () => {
   const {user} = useGlobalContext() 
   const {data:posts, refetch} = useAppwrite(getAllPosts)
   const {data:latesPosts} = useAppwrite(getLatestPost)
-
+  //console.log(posts);
   const [refreshing,setRefreshing] = useState(false)
 
 
@@ -31,6 +31,7 @@ const Home = () => {
         keyExtractor={(item:any) => item.$id }
         renderItem={({item}:any)=>(
           <VideoCard
+            id={item.$id}
             title={item.title}
             thumbnail={item.thumbnail}
             video={item.video}

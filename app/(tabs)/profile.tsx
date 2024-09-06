@@ -9,6 +9,7 @@ import VideoCard from '@/components/VideoCard';
 import EmptyState from '@/components/EmptyState';
 
 import { icons } from '@/constants';
+import { StatusBar } from 'expo-status-bar';
 
 const Profile = () => {
   const { user, setUser, setIsLogged } = useGlobalContext();
@@ -28,6 +29,7 @@ const Profile = () => {
         keyExtractor={(item: any) => item.$id}
         renderItem={({ item }: any) => (
           <VideoCard
+            id={item.$id}
             title={item.title}
             thumbnail={item.thumbnail}
             video={item.video}
@@ -66,6 +68,7 @@ const Profile = () => {
             subtitle="No videos found for this profile" />
         )}
       />
+      <StatusBar style='light' backgroundColor='#161622' />
     </SafeAreaView>
   )
 }

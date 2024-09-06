@@ -1,7 +1,9 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native'
+import { View, Text, Image, TouchableOpacity, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { icons } from '@/constants'
 import { ResizeMode, Video } from 'expo-av'
+import { updateLikedPost } from '@/lib/appwrite'
+import { useGlobalContext } from '@/context/UserContext'
 
 
 
@@ -11,11 +13,29 @@ interface VideoCardProps {
     video: string,
     creator: string,
     avatar: string,
+    id:string,
 }
 
-const VideoCard = ({ title, thumbnail, video, creator, avatar }: VideoCardProps) => {
+const VideoCard = ({ id,title, thumbnail, video, creator, avatar }: VideoCardProps) => {
+    const {user} = useGlobalContext();
     const [play, setPlay] = useState(false)
 
+    const bookmarkedPost= async()=>{
+        try {
+            const result:any = await updateLikedPost(id,user.$id)
+            //console.log("result",result);
+            if(!result.success){
+                return Alert.alert("fail","The post has been saved!")
+            }else{
+                return Alert.alert("success","The post added to your bookmark successfully")
+            }
+            
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(error.message)
+            }
+        }
+    }
     return (
         <View className="flex flex-col items-center px-4 mb-14">
             <View className="flex flex-row gap-3 items-start">
@@ -33,9 +53,9 @@ const VideoCard = ({ title, thumbnail, video, creator, avatar }: VideoCardProps)
                         </Text>
                     </View>
                 </View>
-                <View>
+                <TouchableOpacity onPress={bookmarkedPost}>
                     <Image source={icons.menu} className='w-5 h-5' resizeMode='contain' />
-                </View>
+                </TouchableOpacity>
             </View>
             {play ? (
                 <Video 

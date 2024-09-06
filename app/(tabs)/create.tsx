@@ -8,7 +8,7 @@ import { icons } from '@/constants'
 import CustomButton from '@/components/CustomButton'
 import { createVideoPost } from '@/lib/appwrite'
 import { router } from 'expo-router'
-import * as DocumentPicker from "expo-document-picker"
+import * as ImagePicker from "expo-image-picker";
 
 const Create = () => {
   const {user} = useGlobalContext();
@@ -17,14 +17,15 @@ const Create = () => {
     title: "",
     video: null,
     thumbnail: null,
-    prompt: "",
+    propmt: "",
   })
 
   const openPicker = async(selectType:string)=>{
-    const result = await DocumentPicker.getDocumentAsync({
-      type: selectType === "image"? ["image/png","image/jpg","image/jpeg"]:
-                            ["video/mp4","video/gif"]
-    })
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: selectType === "image" ? ImagePicker.MediaTypeOptions.Images :ImagePicker.MediaTypeOptions.Videos,
+      aspect: [4, 3],
+      quality: 1,
+    });
     if(!result.canceled){
       if(selectType === "image"){
         setForm({...form, thumbnail : result.assets[0]})
@@ -37,7 +38,7 @@ const Create = () => {
 
   
   const submit = async()=>{
-    if (!form.title || !form.prompt || !form.video || !form.thumbnail ){
+    if (!form.title || !form.propmt || !form.video || !form.thumbnail ){
       return Alert.alert("Error","Please provide all fields")
     }
     setUploading(true)
@@ -133,7 +134,7 @@ const Create = () => {
           title="AI Prompt"
           value={form.prompt}
           placeholder="The AI prompt of your video...."
-          handleChangeText={(e:any) => setForm({ ...form, prompt: e })}
+          handleChangeText={(e:any) => setForm({ ...form, propmt: e })}
           otherStyle="mt-7"
         />
          <CustomButton

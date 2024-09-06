@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import VideoCard from '@/components/VideoCard';
 import SearchInput from '@/components/SearchInput';
 import EmptyState from '@/components/EmptyState';
+import { StatusBar } from 'expo-status-bar';
 
 const Search = () => {
   const { query } = useLocalSearchParams();
@@ -24,6 +25,7 @@ const Search = () => {
         keyExtractor={(item: any) => item.$id}
         renderItem={({ item }: any) => (
           <VideoCard
+            id={item.$id}
             title={item.title}
             thumbnail={item.thumbnail}
             video={item.video}
@@ -32,14 +34,14 @@ const Search = () => {
 
           />)}
         ListHeaderComponent={() => (
-            <View className="flex  my-6 px-4 space-y-6">
-              <Text className="font-pmedium text-sm text-gray-100">Search Results</Text>
-              <Text className="text-2xl font-psemibold text-white">{query}</Text>
-              <View>
-                <SearchInput initialQuery={query} />
-              </View>
+          <View className="flex  my-6 px-4 space-y-6">
+            <Text className="font-pmedium text-sm text-gray-100">Search Results</Text>
+            <Text className="text-2xl font-psemibold text-white">{query}</Text>
+            <View>
+              <SearchInput initialQuery={query} />
             </View>
-  
+          </View>
+
         )}
         ListEmptyComponent={() => (
           <EmptyState
@@ -47,6 +49,7 @@ const Search = () => {
             subtitle="No videos found for this search query" />
         )}
       />
+      <StatusBar style='light' backgroundColor='#161622' />
     </SafeAreaView>
   )
 }
