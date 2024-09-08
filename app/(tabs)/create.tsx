@@ -2,13 +2,13 @@ import { View, Text, ScrollView, TouchableOpacity, Image, Alert } from 'react-na
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import FormField from '@/components/FormField'
-import { useGlobalContext } from '@/context/UserContext'
 import { ResizeMode, Video } from 'expo-av'
 import { icons } from '@/constants'
 import CustomButton from '@/components/CustomButton'
 import { createVideoPost } from '@/lib/appwrite'
 import { router } from 'expo-router'
 import * as ImagePicker from "expo-image-picker";
+import { useGlobalContext } from '@/context/GlobalProvider'
 
 const Create = () => {
   const {user} = useGlobalContext();

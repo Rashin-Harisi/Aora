@@ -5,7 +5,8 @@ import {getUserSavedPosts } from '@/lib/appwrite';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import VideoCard from '@/components/VideoCard';
 import EmptyState from '@/components/EmptyState';
-import { useGlobalContext } from '@/context/UserContext';
+import { useGlobalContext } from '@/context/GlobalProvider';
+
 
 const Bookmark = () => {
   const {user} = useGlobalContext()

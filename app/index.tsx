@@ -6,7 +6,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import CustomButton from '@/components/CustomButton'
 import { images } from '@/constants'
 import 'react-native-url-polyfill/auto'
-import { useGlobalContext } from '@/context/UserContext'
+import { useGlobalContext } from '@/context/GlobalProvider'
+
 
 const Welcome = () => {
 

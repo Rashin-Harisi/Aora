@@ -1,15 +1,14 @@
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { useGlobalContext } from '@/context/UserContext'
 import useAppwrite from '@/lib/useAppwrite';
 import { getUserPosts, signOut } from '@/lib/appwrite';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import VideoCard from '@/components/VideoCard';
 import EmptyState from '@/components/EmptyState';
-
 import { icons } from '@/constants';
 import { StatusBar } from 'expo-status-bar';
+import { useGlobalContext } from '@/context/GlobalProvider';
 
 const Profile = () => {
   const { user, setUser, setIsLogged } = useGlobalContext();

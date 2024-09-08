@@ -3,7 +3,8 @@ import React, { useState } from 'react'
 import { icons } from '@/constants'
 import { ResizeMode, Video } from 'expo-av'
 import { updateLikedPost } from '@/lib/appwrite'
-import { useGlobalContext } from '@/context/UserContext'
+import { useGlobalContext } from '@/context/GlobalProvider'
+
 
 
 
